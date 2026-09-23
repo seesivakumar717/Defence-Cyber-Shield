@@ -1,0 +1,38 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Profile — Defence Cyber Shield{% endblock %}
+
+{% block sidebar_links %}
+<a href="{{ url_for('soldier_dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="{{ url_for('soldier_dashboard') }}#upload-card" class="nav-link"><i class="bi bi-cloud-upload"></i> Upload Screenshot</a>
+<a href="{{ url_for('soldier_history') }}" class="nav-link"><i class="bi bi-clock-history"></i> History</a>
+<a href="{{ url_for('soldier_profile') }}" class="nav-link active"><i class="bi bi-person-circle"></i> Profile</a>
+{% endblock %}
+
+{% block page_eyebrow %}Operator Record{% endblock %}
+{% block page_title %}Profile{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="glass glass-card panel-glow text-center fade-up">
+      <div class="stat-icon mx-auto mb-3" style="width:72px;height:72px;font-size:1.8rem;">
+        <i class="bi bi-person-badge"></i>
+      </div>
+      <h2 class="fs-5 mb-1">{{ user['name'] }}</h2>
+      <p class="text-dim small mono mb-0">ARMY ID: {{ user['army_id'] }}</p>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="glass glass-card panel-glow fade-up delay-1">
+      <h3 class="fs-6 mb-3">Account Details</h3>
+      <dl class="row mb-0 small">
+        <dt class="col-4 text-dim">Username</dt><dd class="col-8 mono">{{ user['username'] }}</dd>
+        <dt class="col-4 text-dim">Email</dt><dd class="col-8">{{ user['email'] }}</dd>
+        <dt class="col-4 text-dim">Role</dt><dd class="col-8">Soldier</dd>
+        <dt class="col-4 text-dim">Registered</dt><dd class="col-8 mono">{{ user['created_at'][:16] }}</dd>
+        <dt class="col-4 text-dim">Total Scans</dt><dd class="col-8">{{ total_scans }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+{% endblock %}

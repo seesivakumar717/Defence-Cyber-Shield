@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}User Login — Defence Cyber Shield{% endblock %}
+
+{% block content %}
+<nav class="dcs-navbar">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="brand-mark" href="{{ url_for('index') }}">
+      <i class="bi bi-shield-lock-fill shield-icon fs-4"></i>
+      DEFENCE CYBER SHIELD
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      {% if admin_exists %}
+        <a href="{{ url_for('admin_login') }}" class="btn btn-outline-neon btn-sm">
+          <i class="bi bi-shield-lock me-1"></i> Admin Login
+        </a>
+      {% else %}
+        <a href="{{ url_for('admin_register') }}" class="btn btn-outline-neon btn-sm">
+          <i class="bi bi-shield-lock me-1"></i> Admin Registration
+        </a>
+      {% endif %}
+      <a href="{{ url_for('register') }}" class="btn btn-neon btn-sm">Register</a>
+    </div>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="glass auth-card panel-glow fade-up">
+    <div class="text-center mb-4">
+      <i class="bi bi-fingerprint text-neon" style="font-size:2.4rem;"></i>
+      <h1 class="fs-4 mt-2 mb-1">USER LOGIN</h1>
+      <p class="text-dim small mb-0">Authenticate with your credentials</p>
+    </div>
+
+    {% include "partials/flash.html" %}
+
+    <form method="POST" action="{{ url_for('login') }}" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="mb-3">
+        <label class="form-label" for="username">Username or Email</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="enter username or email" required autocomplete="username">
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn btn-neon w-100 py-2">
+        <i class="bi bi-box-arrow-in-right me-1"></i> AUTHENTICATE USER
+      </button>
+    </form>
+
+    <div class="divider-glow"></div>
+    <p class="text-center text-dim small mb-2">
+      Not registered yet?
+      <a href="{{ url_for('register') }}" class="text-neon fw-semibold">Create Account</a>
+    </p>
+    <p class="text-center text-dim small mb-0">
+      Administrator?
+      {% if admin_exists %}
+        <a href="{{ url_for('admin_login') }}" class="text-neon fw-semibold">Admin Login</a>
+      {% else %}
+        <a href="{{ url_for('admin_register') }}" class="text-neon fw-semibold">Admin Registration</a>
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}
+

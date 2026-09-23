@@ -1,0 +1,56 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Scan History — Defence Cyber Shield{% endblock %}
+
+{% block sidebar_links %}
+<a href="{{ url_for('soldier_dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="{{ url_for('soldier_dashboard') }}#upload-card" class="nav-link"><i class="bi bi-cloud-upload"></i> Upload Screenshot</a>
+<a href="{{ url_for('soldier_history') }}" class="nav-link active"><i class="bi bi-clock-history"></i> History</a>
+<a href="{{ url_for('soldier_profile') }}" class="nav-link"><i class="bi bi-person-circle"></i> Profile</a>
+{% endblock %}
+
+{% block page_eyebrow %}Log{% endblock %}
+{% block page_title %}Scan History{% endblock %}
+
+{% block dashboard_content %}
+<div class="glass glass-card panel-glow fade-up">
+  {% if scans %}
+  <div class="dcs-table-wrap">
+    <table class="dcs-table">
+      <thead>
+        <tr>
+          <th>Scan ID</th>
+          <th>Date</th>
+          <th>Risk Score</th>
+          <th>Risk Level</th>
+          <th>Incident</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for scan in scans %}
+        <tr>
+          <td class="mono text-dim">#{{ scan['id'] }}</td>
+          <td class="mono small">{{ scan['created_at'][:16] }}</td>
+          <td class="mono">{{ scan['risk_score'] }}</td>
+          <td><span class="risk-badge {{ scan['risk_level']|lower }}">{{ scan['risk_level'] }}</span></td>
+          <td>
+            {% if scan['incident_id'] %}
+              <span class="status-badge open mono">#{{ scan['incident_id'] }}</span>
+            {% else %}
+              <span class="text-dim small">—</span>
+            {% endif %}
+          </td>
+          <td><a href="{{ url_for('scan_result', scan_id=scan['id']) }}" class="btn btn-outline-neon py-1 px-2"><i class="bi bi-eye"></i></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="bi bi-inboxes fs-1"></i>
+    <p class="mb-0">No scans recorded yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

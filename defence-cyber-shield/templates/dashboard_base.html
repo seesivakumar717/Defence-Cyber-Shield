@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar">
+    <div class="sidebar-brand">
+      <i class="bi bi-shield-lock-fill text-neon"></i>
+      <span>DEFENCE<br>CYBER SHIELD</span>
+    </div>
+    <nav class="nav flex-column">
+      {% block sidebar_links %}{% endblock %}
+    </nav>
+    <div class="divider-glow" style="margin: 1.2rem 0;"></div>
+    <a href="{{ url_for('logout') }}" class="nav-link text-red">
+      <i class="bi bi-box-arrow-right"></i> Sign Out
+    </a>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-outline-neon d-md-none py-1 px-2" id="sidebar-toggle"><i class="bi bi-list"></i></button>
+        <div>
+          <div class="page-eyebrow">{% block page_eyebrow %}{% endblock %}</div>
+          <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+        </div>
+      </div>
+      <span class="status-pill"><span class="dot"></span>{{ session_role|upper }} · {{ session_name }}</span>
+    </div>
+
+    {% include "partials/flash.html" %}
+
+    {% block dashboard_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

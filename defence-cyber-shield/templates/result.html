@@ -1,0 +1,84 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Scan Result — Defence Cyber Shield{% endblock %}
+
+{% block sidebar_links %}
+<a href="{{ url_for('soldier_dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="{{ url_for('soldier_dashboard') }}#upload-card" class="nav-link"><i class="bi bi-cloud-upload"></i> Upload Screenshot</a>
+<a href="{{ url_for('soldier_history') }}" class="nav-link active"><i class="bi bi-clock-history"></i> History</a>
+<a href="{{ url_for('soldier_profile') }}" class="nav-link"><i class="bi bi-person-circle"></i> Profile</a>
+{% endblock %}
+
+{% block page_eyebrow %}Analysis Complete{% endblock %}
+{% block page_title %}Scan Result #{{ scan['id'] }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="glass glass-card panel-glow text-center fade-up">
+      <p class="page-eyebrow mb-3">Risk Score</p>
+      <div class="gauge-wrap">
+        <svg width="220" height="220" viewBox="0 0 220 220">
+          <circle class="gauge-track" cx="110" cy="110" r="94" fill="none" stroke-width="14"/>
+          <circle class="gauge-fill" cx="110" cy="110" r="94" fill="none" stroke-width="14" data-score="{{ scan['risk_score'] }}"/>
+        </svg>
+        <div class="gauge-label">
+          <span class="gauge-score"><span id="gauge-score-label">0</span></span>
+          <span class="gauge-suffix">/ 100</span>
+        </div>
+      </div>
+      <span class="risk-badge {{ scan['risk_level']|lower }} mt-3">{{ scan['risk_level'] }} RISK</span>
+      <p class="text-dim small mt-3 mb-0 mono">{{ scan['created_at'][:16] }}</p>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="risk-banner {{ scan['risk_level']|lower }} fade-up delay-1 mb-4">
+      <i class="bi {{ 'bi-shield-check' if scan['risk_level']=='Low' else 'bi-exclamation-triangle-fill' if scan['risk_level']=='Medium' else 'bi-shield-exclamation' }} fs-3
+        {{ 'text-safe' if scan['risk_level']=='Low' else 'text-amber' if scan['risk_level']=='Medium' else 'text-red' }}"></i>
+      <div>
+        <h2 class="fs-5 mb-1">
+          {% if scan['risk_level'] == 'High' %}Incident Automatically Reported
+          {% elif scan['risk_level'] == 'Medium' %}Suspicious Characteristics Detected
+          {% else %}No Significant Threat Detected{% endif %}
+        </h2>
+        <p class="mb-0 small">{{ scan['recommendation'] }}</p>
+        {% if scan['incident_id'] %}
+        <p class="mb-0 small mt-2 mono text-red"><i class="bi bi-broadcast me-1"></i>Incident #{{ scan['incident_id'] }} routed to Defence Cyber Dashboard.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="glass glass-card panel-glow fade-up delay-2 mb-4">
+      <h3 class="fs-6 mb-3"><i class="bi bi-list-check text-neon me-1"></i> Triggered Indicators</h3>
+      {% if indicators %}
+        <ul class="mb-0 ps-3">
+          {% for indicator in indicators %}
+          <li class="small text-dim mb-1">{{ indicator }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-dim small mb-0">No indicators triggered.</p>
+      {% endif %}
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="glass glass-card panel-glow h-100 fade-up delay-3">
+          <h3 class="fs-6 mb-3"><i class="bi bi-image text-green me-1"></i> Uploaded Screenshot</h3>
+          <div class="preview-frame">
+            <img src="{{ url_for('uploaded_file', filename=scan['uploaded_image']) }}" alt="Uploaded screenshot" style="max-height:260px;object-fit:contain;">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="glass glass-card panel-glow h-100 fade-up delay-4">
+          <h3 class="fs-6 mb-3"><i class="bi bi-file-text text-neon me-1"></i> OCR Extracted Text</h3>
+          <div class="mono small text-dim" style="max-height:260px; overflow-y:auto; white-space:pre-wrap;">{{ scan['ocr_text'] or '(no readable text extracted)' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <a href="{{ url_for('soldier_dashboard') }}" class="btn btn-outline-neon mt-4"><i class="bi bi-arrow-left me-1"></i> Back to Dashboard</a>
+  </div>
+</div>
+{% endblock %}

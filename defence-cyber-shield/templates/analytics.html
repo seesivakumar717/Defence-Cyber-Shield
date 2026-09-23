@@ -1,0 +1,53 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Analytics — Defence Cyber Shield{% endblock %}
+
+{% block sidebar_links %}
+<a href="{{ url_for('admin_dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="{{ url_for('admin_incidents') }}" class="nav-link"><i class="bi bi-exclamation-octagon"></i> Incidents</a>
+<a href="{{ url_for('admin_users') }}" class="nav-link"><i class="bi bi-people"></i> Users</a>
+<a href="{{ url_for('admin_analytics') }}" class="nav-link active"><i class="bi bi-bar-chart-line"></i> Analytics</a>
+<a href="{{ url_for('admin_reports') }}" class="nav-link"><i class="bi bi-file-earmark-text"></i> Reports</a>
+{% endblock %}
+
+{% block page_eyebrow %}Threat Intelligence{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+
+{% block dashboard_content %}
+<script id="chart-data" type="application/json">{{ chart_payload|safe }}</script>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="glass glass-card panel-glow fade-up h-100">
+      <h2 class="fs-6 mb-3"><i class="bi bi-pie-chart text-neon me-1"></i> Risk Distribution</h2>
+      <canvas id="riskDistributionChart" height="220"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="glass glass-card panel-glow fade-up delay-1 h-100">
+      <h2 class="fs-6 mb-3"><i class="bi bi-bar-chart text-green me-1"></i> Incident Status</h2>
+      <canvas id="incidentStatusChart" height="180"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="glass glass-card panel-glow fade-up delay-2 h-100">
+      <h2 class="fs-6 mb-3"><i class="bi bi-graph-up text-neon me-1"></i> Monthly Scan Trend</h2>
+      <canvas id="monthlyTrendChart" height="180"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass glass-card panel-glow fade-up delay-3 h-100">
+      <h2 class="fs-6 mb-3"><i class="bi bi-list-ol text-green me-1"></i> Top Threat Types</h2>
+      {% if top_threats %}
+      <canvas id="topThreatsChart" height="220"></canvas>
+      {% else %}
+      <div class="empty-state py-4"><i class="bi bi-shield-check fs-1"></i><p class="mb-0 small">No indicators recorded yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

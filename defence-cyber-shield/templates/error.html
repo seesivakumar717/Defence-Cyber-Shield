@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Error {{ code }} — Defence Cyber Shield{% endblock %}
+
+{% block content %}
+<nav class="dcs-navbar">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="brand-mark" href="{{ url_for('index') }}">
+      <i class="bi bi-shield-lock-fill shield-icon fs-4"></i>
+      DEFENCE CYBER SHIELD
+    </a>
+  </div>
+</nav>
+<div class="auth-wrap">
+  <div class="glass auth-card panel-glow text-center fade-up">
+    <i class="bi bi-exclamation-octagon text-red" style="font-size:2.6rem;"></i>
+    <h1 class="fs-2 mt-3 mono">{{ code }}</h1>
+    <p class="text-dim mb-4">{{ message }}</p>
+    <a href="{{ url_for('index') }}" class="btn btn-neon">Return to Base</a>
+  </div>
+</div>
+{% endblock %}

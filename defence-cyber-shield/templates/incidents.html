@@ -1,0 +1,81 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Incidents — Defence Cyber Shield{% endblock %}
+
+{% block sidebar_links %}
+<a href="{{ url_for('admin_dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="{{ url_for('admin_incidents') }}" class="nav-link active"><i class="bi bi-exclamation-octagon"></i> Incidents</a>
+<a href="{{ url_for('admin_users') }}" class="nav-link"><i class="bi bi-people"></i> Users</a>
+<a href="{{ url_for('admin_analytics') }}" class="nav-link"><i class="bi bi-bar-chart-line"></i> Analytics</a>
+<a href="{{ url_for('admin_reports') }}" class="nav-link"><i class="bi bi-file-earmark-text"></i> Reports</a>
+{% endblock %}
+
+{% block page_eyebrow %}Incident Management{% endblock %}
+{% block page_title %}Cyber Incidents{% endblock %}
+
+{% block dashboard_content %}
+<div class="glass glass-card panel-glow fade-up">
+  {% if incidents %}
+  <div class="dcs-table-wrap">
+    <table class="dcs-table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Soldier</th><th>Screenshot</th><th>Risk</th><th>Status</th><th>Time</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for incident in incidents %}
+        <tr>
+          <td class="mono text-dim">#{{ incident['id'] }}</td>
+          <td>{{ incident['soldier_name'] }}<br><span class="text-dim small mono">{{ incident['soldier_army_id'] }}</span></td>
+          <td>
+            <button type="button" class="thumb-btn" data-incident-id="{{ incident['id'] }}" data-bs-toggle="tooltip" title="View details">
+              <img src="{{ url_for('uploaded_file', filename=incident['uploaded_image']) }}" alt="screenshot">
+            </button>
+          </td>
+          <td><span class="risk-badge {{ incident['risk_level']|lower }}">{{ incident['risk_level'] }} · {{ incident['risk_score'] }}</span></td>
+          <td><span class="status-badge {{ incident['status']|lower }}">{{ incident['status'] }}</span></td>
+          <td class="mono small text-dim">{{ incident['created_at'][:16] }}</td>
+          <td>
+            <div class="d-flex gap-1 flex-wrap">
+              <form method="POST" action="{{ url_for('admin_incident_status', incident_id=incident['id']) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="status" value="Open">
+                <button class="btn btn-outline-neon py-1 px-2" type="submit" title="Open"><i class="bi bi-folder2-open"></i></button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_incident_status', incident_id=incident['id']) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="status" value="Resolved">
+                <button class="btn btn-olive py-1 px-2" type="submit" title="Resolve"><i class="bi bi-check2-circle"></i></button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_incident_delete', incident_id=incident['id']) }}" onsubmit="return confirm('Delete incident #{{ incident['id'] }}? This cannot be undone.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-danger-outline py-1 px-2" type="submit" title="Delete"><i class="bi bi-trash3"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="bi bi-shield-check fs-1"></i>
+    <p class="mb-0">No incidents on record. All clear.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Incident detail modal -->
+<div class="modal fade" id="incidentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-file-earmark-lock2 me-2"></i>Incident Detail</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="incidentModalBody"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

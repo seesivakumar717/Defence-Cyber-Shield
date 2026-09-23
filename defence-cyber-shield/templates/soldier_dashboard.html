@@ -1,0 +1,94 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Soldier Dashboard — Defence Cyber Shield{% endblock %}
+
+{% block sidebar_links %}
+<a href="{{ url_for('soldier_dashboard') }}" class="nav-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="{{ url_for('soldier_dashboard') }}#upload-card" class="nav-link"><i class="bi bi-cloud-upload"></i> Upload Screenshot</a>
+<a href="{{ url_for('soldier_history') }}" class="nav-link"><i class="bi bi-clock-history"></i> History</a>
+<a href="{{ url_for('soldier_profile') }}" class="nav-link"><i class="bi bi-person-circle"></i> Profile</a>
+{% endblock %}
+
+{% block page_eyebrow %}Soldier Terminal{% endblock %}
+{% block page_title %}Threat Reporting Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card panel-glow fade-up">
+      <div class="stat-icon"><i class="bi bi-file-earmark-image"></i></div>
+      <div><div class="stat-value">{{ total }}</div><div class="stat-label">Total Scans</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card panel-glow fade-up delay-1">
+      <div class="stat-icon icon-safe"><i class="bi bi-shield-check"></i></div>
+      <div><div class="stat-value">{{ low }}</div><div class="stat-label">Low Risk</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card panel-glow fade-up delay-2">
+      <div class="stat-icon icon-amber"><i class="bi bi-exclamation-triangle"></i></div>
+      <div><div class="stat-value">{{ medium }}</div><div class="stat-label">Medium Risk</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card panel-glow fade-up delay-3">
+      <div class="stat-icon icon-red"><i class="bi bi-shield-exclamation"></i></div>
+      <div><div class="stat-value">{{ high }}</div><div class="stat-label">High Risk</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="glass glass-card panel-glow fade-up" id="upload-card">
+      <h2 class="fs-5 mb-1"><i class="bi bi-cloud-upload text-neon me-1"></i> Report Suspicious Email</h2>
+      <p class="text-dim small mb-3">Upload a screenshot of the email. The AI engine will extract and analyze the text automatically.</p>
+
+      <form id="upload-form" method="POST" action="{{ url_for('soldier_analyze') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="dropzone" id="dropzone">
+          <i class="bi bi-image dz-icon" style="font-size:2.4rem;"></i>
+          <p class="mb-1 fw-semibold">Drag & drop screenshot here</p>
+          <p class="text-dim small mb-0">or click to browse · PNG, JPG, WEBP · max 8MB</p>
+        </div>
+        <input type="file" id="screenshot-input" name="screenshot" accept="image/png,image/jpeg,image/webp" class="d-none" required>
+
+        <div class="preview-frame d-none mt-3" id="preview-frame">
+          <img id="preview-img" src="" alt="Screenshot preview">
+          <div class="text-end mt-2">
+            <button type="button" class="btn btn-danger-outline" id="remove-preview"><i class="bi bi-trash3 me-1"></i>Remove</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-neon w-100 mt-3 py-2" id="analyze-btn" disabled>
+          <i class="bi bi-cpu me-1"></i> Analyze Screenshot
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="glass glass-card panel-glow h-100 fade-up delay-1">
+      <h2 class="fs-5 mb-3"><i class="bi bi-clock-history text-green me-1"></i> Recent Activity</h2>
+      {% if recent_scans %}
+        <ul class="list-unstyled d-flex flex-column gap-3 mb-0">
+          {% for scan in recent_scans %}
+          <li>
+            <a href="{{ url_for('scan_result', scan_id=scan['id']) }}" class="d-flex justify-content-between align-items-center text-decoration-none">
+              <span class="text-dim small mono">{{ scan['created_at'][:16] }}</span>
+              <span class="risk-badge {{ scan['risk_level']|lower }}">{{ scan['risk_level'] }} · {{ scan['risk_score'] }}</span>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="empty-state py-4">
+          <i class="bi bi-inboxes fs-1"></i>
+          <p class="mb-0 small">No scans yet. Upload your first screenshot to begin.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — Defence Cyber Shield{% endblock %}
+
+{% block content %}
+<nav class="dcs-navbar">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="brand-mark" href="{{ url_for('index') }}">
+      <i class="bi bi-shield-lock-fill shield-icon fs-4"></i>
+      DEFENCE CYBER SHIELD
+    </a>
+    <a href="{{ url_for('login') }}" class="btn btn-outline-neon btn-sm">
+      <i class="bi bi-person-badge me-1"></i> User Login
+    </a>
+  </div>
+</nav>
+
+<div class="auth-wrap">
+  <div class="glass auth-card panel-glow fade-up">
+    <div class="text-center mb-4">
+      <i class="bi bi-shield-lock text-neon" style="font-size:2.4rem;"></i>
+      <h1 class="fs-4 mt-2 mb-1">Administrator Login</h1>
+      <p class="text-dim small mb-0">Restricted Access · Authorised Cyber SOC Personnel Only</p>
+    </div>
+
+    {% include "partials/flash.html" %}
+
+    <form method="POST" action="{{ url_for('admin_login') }}" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="mb-3">
+        <label class="form-label" for="username">Admin Username</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="enter admin username" required autocomplete="username">
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="password">Admin Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn btn-neon w-100 py-2 mb-3">
+        <i class="bi bi-shield-lock me-1"></i> Authenticate Administrator
+      </button>
+    </form>
+
+    <div class="divider-glow mb-3"></div>
+    <div class="text-center d-flex flex-column gap-2">
+      {% if not admin_exists %}
+      <a href="{{ url_for('admin_register') }}" class="btn btn-neon btn-sm w-100">
+        <i class="bi bi-shield-plus me-1"></i> Register Admin Account
+      </a>
+      {% endif %}
+      <a href="{{ url_for('login') }}" class="btn btn-outline-neon btn-sm w-100">
+        <i class="bi bi-arrow-left me-1"></i> Back to User Login
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
